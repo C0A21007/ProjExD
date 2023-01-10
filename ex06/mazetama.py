@@ -45,6 +45,17 @@ def main_proc():
 
     root.after(100, main_proc)
 
+def bgm():#BGMを付与
+    pygame.mixer.init(frequency = 44100)  
+    pygame.mixer.music.load("menuettm.mp3")    
+    pygame.mixer.music.play(10) 
+
+def caralarm():#死亡時音声
+    pygame.mixer.init(frequency = 44100)  
+    pygame.mixer.music.load("carstop.wav")    
+    pygame.mixer.music.play(1) 
+
+bgm()
 
 if __name__ == "__main__":
     root = tk.Tk()
