@@ -1,5 +1,6 @@
 import tkinter as tk
 import maze_maker as mm
+import pygame
 import queue
 import copy
 
@@ -12,6 +13,38 @@ def key_down(event):
  #   global key
   #  key = ""
   
+def enemy_move():
+    global ex,ey
+    grid = copy.deepcopy(maze_lst)
+    for vec in grid:
+        for i in range(len(vec)):
+            if vec[i]==1 or vec[i]==9:
+                vec[i] = -7
+            elif vec[i]==0:
+                vec[i] = -9
+
+    XP = [ 0, 1, 0, -1]
+    YP = [-1, 0, 1,  0]
+    que = queue.Queue()
+    que.put((mx,my))
+    grid[mx][my]=0
+    while not que.empty():
+        tx,ty = que.get()
+        for i in range(4):
+            nx,ny = tx+XP[i], ty+YP[i]
+            if grid[nx][ny]!=-9:
+                continue
+            grid[nx][ny] = grid[tx][ty] + 1
+            if nx==ex and ny==ey:
+                break
+            que.put((nx,ny))
+    for i in range(4):
+        if grid[ex][ey]==grid[ex+XP[i]][ey+YP[i]]+1:
+            ex,ey = ex+XP[i],ey+YP[i]
+            break
+    
+
+
 def enemy_move():
     global ex,ey
     grid = copy.deepcopy(maze_lst)
@@ -76,6 +109,7 @@ def main_proc():
     cex, cey = ex*40+20, ey*40+20
 
     if mx==ex and my==ey:
+        caralarm()
         return
 
     canvas.coords("enemy", cex, cey)
@@ -84,6 +118,23 @@ def main_proc():
         pass
 
     root.after(100, main_proc)
+
+def bgm():#BGMを付与
+    pygame.mixer.init(frequency = 44100)  
+    pygame.mixer.music.load("menuettm.mp3")    
+    pygame.mixer.music.play(10) 
+
+def caralarm():#死亡時音声
+    pygame.mixer.init(frequency = 44100)  
+    pygame.mixer.music.load("carstop.wav")    
+    pygame.mixer.music.play(1) 
+
+bgm()
+
+def countdown(num): #引数numは残り時間
+    label['text'] = num #残り時間がlabelのtextになる
+    if num > 0: #残り時間が0になるまで
+        root.after(1000, countdown, num-1) #1秒ごとにcountdown関数を実行し、そのたびに時間を減らす
 
 
 def countdown(num): #引数numは残り時間
