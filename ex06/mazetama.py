@@ -1,5 +1,6 @@
 import tkinter as tk
 import maze_maker as mm
+import pygame
 import queue
 import copy
 
@@ -78,6 +79,7 @@ def main_proc():
     cex, cey = ex*40+20, ey*40+20
 
     if mx==ex and my==ey:
+        caralarm()
         return
 
     canvas.coords("enemy", cex, cey)
