@@ -8,7 +8,7 @@ import time
 def key_down(event):
     global key
     key = event.keysym
-
+#C0A21071が実装
 #キーを離しても押された状態を保つために、キーを話したときの関数を削除した
 #def key_up(event):
  #   global key
@@ -73,7 +73,7 @@ def main_proc():
         if key == "Left": mx += 1
         if key == "Right": mx -= 1   
     
-    #迷路生成のリストを流用して玉の残数判定をする
+    #迷路生成のリストを流用して玉の残数判定をする処理、以下89行目まで(C0A21007)
     #0が通路、1が壁、9は玉が消去済みの通路
     if(maze_lst[mx][my] == 0):#行先のマスが通路（まだ玉が消されていない）なら
         ball -= 1 #玉の残数変数を１減らす
@@ -99,40 +99,34 @@ def main_proc():
 
     canvas.coords("enemy", cex, cey)
 
-    if(ball == 0): #玉を全て回収した時にゲームクリアの処理を挟むと思うので、それ用の判定文です
+    if(ball == 0): #玉を全て回収した時にゲームクリアの処理を挟むと思うので、それ用の判定文です(C0A21007)
         pass
 
     root.after(100, main_proc)
 
-def bgm():#BGMを付与
+def bgm():#BGMを付与(C0A21160が実装）
     pygame.mixer.init(frequency = 44100)  
     pygame.mixer.music.load("menuettm.mp3")    
     pygame.mixer.music.play(10) 
 
-def caralarm():#死亡時音声
+def caralarm():#死亡時音声(C0A21160が実装）
     pygame.mixer.init(frequency = 44100)  
     pygame.mixer.music.load("carstop.wav")    
     pygame.mixer.music.play(1) 
 
 bgm()
 
-def countdown(num): #カウントダウンする関数（小西騎央）
+def countdown(num): #カウントダウンする関数(C0A21047が実装）
     label['text'] = num #残り時間がlabelのtextになる
     if num > 0: #残り時間が0になるまで
         root.after(1000, countdown, num-1) #1秒ごとにcountdown関数を実行し、そのたびに時間を減らす
 
-
-def countdown(num): #引数numは残り時間
-    label['text'] = num #残り時間がlabelのtextになる
-    if num > 0: #残り時間が0になるまで
-        root.after(1000, countdown, num-1) #1秒ごとにcountdown関数を実行し、そのたびに時間を減らす
-
-
+        
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("迷えるこうかとん")
 
-    #残り時間表示（小西騎央）
+    #残り時間表示（C0A21047が実装）
     label = tk.Label(root,
                     fg="red",
                     font=("MSゴシック", "30", "normal")
