@@ -1,6 +1,9 @@
 import tkinter as tk
 import maze_maker as mm
-
+import pygame
+import queue
+import copy
+import time
 
 def key_down(event):
     global key
@@ -11,6 +14,36 @@ def key_up(event):
     global key
     key = ""
 
+#C0A21079が実装
+def enemy_move():
+    global ex,ey
+    grid = copy.deepcopy(maze_lst)
+    for vec in grid:
+        for i in range(len(vec)):
+            if vec[i]==1 or vec[i]==9:
+                vec[i] = -7
+            elif vec[i]==0:
+                vec[i] = -9
+
+    XP = [ 0, 1, 0, -1]
+    YP = [-1, 0, 1,  0]
+    que = queue.Queue()
+    que.put((mx,my))
+    grid[mx][my]=0
+    while not que.empty():
+        tx,ty = que.get()
+        for i in range(4):
+            nx,ny = tx+XP[i], ty+YP[i]
+            if grid[nx][ny]!=-9:
+                continue
+            grid[nx][ny] = grid[tx][ty] + 1
+            if nx==ex and ny==ey:
+                break
+            que.put((nx,ny))
+    for i in range(4):
+        if grid[ex][ey]==grid[ex+XP[i]][ey+YP[i]]+1:
+            ex,ey = ex+XP[i],ey+YP[i]
+            break
 
 def main_proc():
     global cx, cy, mx, my, ball
@@ -40,15 +73,53 @@ def main_proc():
 
     canvas.lift("kokaton") #こうかとんを画面上で最も手前側に表示する
 
+    enemy_move()
+    
+    cex, cey = ex*40+20, ey*40+20
+
+    if mx==ex and my==ey:
+        caralarm()
+        return
+
+
+    canvas.coords("enemy", cex, cey)
+
     if(ball == 0): #玉を全て回収した時にゲームクリアの処理を挟むと思うので、それ用の判定文です
         pass
 
     root.after(100, main_proc)
 
+def bgm():#BGMを付与
+    pygame.mixer.init(frequency = 44100)  
+    pygame.mixer.music.load("menuettm.mp3")    
+    pygame.mixer.music.play(10) 
+
+def caralarm():#死亡時音声
+    pygame.mixer.init(frequency = 44100)  
+    pygame.mixer.music.load("carstop.wav")    
+    pygame.mixer.music.play(1) 
+
+bgm()
+
+def countdown(num): #引数numは残り時間
+    label['text'] = num #残り時間がlabelのtextになる
+    if num > 0: #残り時間が0になるまで
+        root.after(1000, countdown, num-1) #1秒ごとにcountdown関数を実行し、そのたびに時間を減らす
+
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("迷えるこうかとん")
+
+    #残り時間表示    
+    label = tk.Label(root,
+                    fg="red",
+                    font=("MSゴシック", "30", "normal")
+                    )
+    label.pack()
+
+    countdown(60)
+    
     canvas = tk.Canvas(root, width=1200, height=1000, bg="black")
     canvas.pack()
 
@@ -60,9 +131,12 @@ if __name__ == "__main__":
     print(ball)
 
     mx, my = 1, 16
+    ex, ey = 1, 1
     cx, cy = mx*30+30, my*30+30
     tori = tk.PhotoImage(file="fig/1.png")
     canvas.create_image(cx, cy, image=tori, tag="kokaton")
+    teki = tk.PhotoImage(file="fig/4.png")
+    canvas.create_image(cx, cy, image=teki, tag="enemy")
     key = ""
     root.bind("<KeyPress>", key_down)
     root.bind("<KeyRelease>", key_up)
