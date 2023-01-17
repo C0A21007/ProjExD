@@ -3,6 +3,7 @@ import maze_maker as mm
 import pygame
 import queue
 import copy
+import time
 
 def key_down(event):
     global key
@@ -13,8 +14,7 @@ def key_up(event):
     global key
     key = ""
 
-
-
+#C0A21079が実装
 def enemy_move():
     global ex,ey
     grid = copy.deepcopy(maze_lst)
@@ -44,7 +44,6 @@ def enemy_move():
         if grid[ex][ey]==grid[ex+XP[i]][ey+YP[i]]+1:
             ex,ey = ex+XP[i],ey+YP[i]
             break
-    
 
 def main_proc():
     global cx, cy, mx, my, ball
@@ -81,6 +80,7 @@ def main_proc():
     if mx==ex and my==ey:
         caralarm()
         return
+
 
     canvas.coords("enemy", cex, cey)
 
