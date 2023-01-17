@@ -2,6 +2,7 @@ import tkinter as tk
 import maze_maker as mm
 import queue
 import copy
+import time
 
 def key_down(event):
     global key
@@ -12,8 +13,7 @@ def key_up(event):
     global key
     key = ""
 
-
-
+#C0A21079が実装
 def enemy_move():
     global ex,ey
     grid = copy.deepcopy(maze_lst)
@@ -43,7 +43,16 @@ def enemy_move():
         if grid[ex][ey]==grid[ex+XP[i]][ey+YP[i]]+1:
             ex,ey = ex+XP[i],ey+YP[i]
             break
-    
+
+def GameOver():
+    label = tk.Label(
+        root,
+        text="Game Over!",
+        font=("",400)
+    )
+    label.pack(side="top")
+    time.sleep(1.0)
+    exit()
 
 def main_proc():
     global cx, cy, mx, my, ball
@@ -78,7 +87,7 @@ def main_proc():
     cex, cey = ex*40+20, ey*40+20
 
     if mx==ex and my==ey:
-        return
+        GameOver()
 
     canvas.coords("enemy", cex, cey)
 
