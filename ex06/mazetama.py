@@ -9,6 +9,21 @@ def key_down(event):
     global key
     key = event.keysym
 
+#キーを離しても押された状態を保つために、キーを話したときの関数を削除した
+#def key_up(event):
+ #   global key
+  #  key = ""
+  
+def enemy_move():
+    global ex,ey
+    grid = copy.deepcopy(maze_lst)
+    for vec in grid:
+        for i in range(len(vec)):
+            if vec[i]==1 or vec[i]==9:
+                vec[i] = -7
+            elif vec[i]==0:
+                vec[i] = -9
+
 
 def key_up(event):
     global key
@@ -107,6 +122,12 @@ def countdown(num): #引数numは残り時間
         root.after(1000, countdown, num-1) #1秒ごとにcountdown関数を実行し、そのたびに時間を減らす
 
 
+def countdown(num): #引数numは残り時間
+    label['text'] = num #残り時間がlabelのtextになる
+    if num > 0: #残り時間が0になるまで
+        root.after(1000, countdown, num-1) #1秒ごとにcountdown関数を実行し、そのたびに時間を減らす
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("迷えるこうかとん")
@@ -139,6 +160,5 @@ if __name__ == "__main__":
     canvas.create_image(cx, cy, image=teki, tag="enemy")
     key = ""
     root.bind("<KeyPress>", key_down)
-    root.bind("<KeyRelease>", key_up)
     main_proc()
     root.mainloop()
